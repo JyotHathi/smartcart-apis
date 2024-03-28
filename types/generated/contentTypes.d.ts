@@ -781,6 +781,11 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'oneToMany',
       'api::wish-list.wish-list'
     >;
+    cart: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToOne',
+      'api::cart.cart'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -809,10 +814,16 @@ export interface ApiCartCart extends Schema.CollectionType {
     draftAndPublish: true;
   };
   attributes: {
-    products: Attribute.Relation<
+    product: Attribute.Relation<
       'api::cart.cart',
-      'manyToMany',
+      'manyToOne',
       'api::product.product'
+    >;
+    quantity: Attribute.Integer;
+    user_detail: Attribute.Relation<
+      'api::cart.cart',
+      'oneToOne',
+      'plugin::users-permissions.user'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -893,6 +904,52 @@ export interface ApiCityCity extends Schema.CollectionType {
   };
 }
 
+export interface ApiOrderOrder extends Schema.CollectionType {
+  collectionName: 'orders';
+  info: {
+    singularName: 'order';
+    pluralName: 'orders';
+    displayName: 'Order';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    order_id: Attribute.UID;
+    order_date: Attribute.DateTime;
+    order_status: Attribute.Enumeration<
+      [
+        'Placed,',
+        'Shipped,',
+        'Cancelled,',
+        'Dispatched,',
+        'Out Of Delivery,',
+        'Delivered'
+      ]
+    >;
+    order_status_updated_at: Attribute.DateTime;
+    tax_amount: Attribute.Float;
+    total_amount: Attribute.Float;
+    payable_amount: Attribute.Float;
+    order_items: Attribute.JSON;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::order.order',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::order.order',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiProductProduct extends Schema.CollectionType {
   collectionName: 'products';
   info: {
@@ -928,7 +985,7 @@ export interface ApiProductProduct extends Schema.CollectionType {
     dimension: Attribute.String;
     carts: Attribute.Relation<
       'api::product.product',
-      'manyToMany',
+      'oneToMany',
       'api::cart.cart'
     >;
     createdAt: Attribute.DateTime;
@@ -1120,6 +1177,7 @@ declare module '@strapi/types' {
       'api::cart.cart': ApiCartCart;
       'api::category.category': ApiCategoryCategory;
       'api::city.city': ApiCityCity;
+      'api::order.order': ApiOrderOrder;
       'api::product.product': ApiProductProduct;
       'api::site-setting.site-setting': ApiSiteSettingSiteSetting;
       'api::state.state': ApiStateState;
