@@ -109,5 +109,5 @@ license.txt
 exports
 .strapi
 dist
-build
+build 
 .strapi-updater.json
