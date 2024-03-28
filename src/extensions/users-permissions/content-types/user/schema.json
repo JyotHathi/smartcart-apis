@@ -73,6 +73,12 @@
     },
     "mobile_number": {
       "type": "string"
+    },
+    "wish_lists": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::wish-list.wish-list",
+      "mappedBy": "user_detail"
     }
   }
 }

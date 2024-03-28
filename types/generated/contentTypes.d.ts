@@ -776,6 +776,11 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'api::user-address.user-address'
     >;
     mobile_number: Attribute.String;
+    wish_lists: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToMany',
+      'api::wish-list.wish-list'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -882,13 +887,19 @@ export interface ApiProductProduct extends Schema.CollectionType {
       'manyToOne',
       'api::category.category'
     >;
-    dimension: Attribute.String;
-    color: Attribute.String;
-    weight: Attribute.String;
-    manufacture_date: Attribute.Date;
-    expiration_date: Attribute.DateTime;
     product_description: Attribute.Text;
     is_deleted: Attribute.Boolean & Attribute.DefaultTo<false>;
+    wish_lists: Attribute.Relation<
+      'api::product.product',
+      'oneToMany',
+      'api::wish-list.wish-list'
+    >;
+    manufacturer_company: Attribute.String;
+    manufacture_date: Attribute.DateTime;
+    weight: Attribute.String;
+    color: Attribute.String;
+    expiration_date: Attribute.DateTime;
+    dimension: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -986,6 +997,46 @@ export interface ApiUserAddressUserAddress extends Schema.CollectionType {
   };
 }
 
+export interface ApiWishListWishList extends Schema.CollectionType {
+  collectionName: 'wish_lists';
+  info: {
+    singularName: 'wish-list';
+    pluralName: 'wish-lists';
+    displayName: 'Wish List';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    product: Attribute.Relation<
+      'api::wish-list.wish-list',
+      'manyToOne',
+      'api::product.product'
+    >;
+    user_detail: Attribute.Relation<
+      'api::wish-list.wish-list',
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::wish-list.wish-list',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::wish-list.wish-list',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -1009,6 +1060,7 @@ declare module '@strapi/types' {
       'api::product.product': ApiProductProduct;
       'api::state.state': ApiStateState;
       'api::user-address.user-address': ApiUserAddressUserAddress;
+      'api::wish-list.wish-list': ApiWishListWishList;
     }
   }
 }
