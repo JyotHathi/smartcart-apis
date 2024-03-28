@@ -80,9 +80,9 @@
       "target": "api::wish-list.wish-list",
       "mappedBy": "user_detail"
     },
-    "cart": {
+    "carts": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "oneToMany",
       "target": "api::cart.cart",
       "mappedBy": "user_detail"
     }
